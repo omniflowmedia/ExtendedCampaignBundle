@@ -3,12 +3,13 @@
 namespace MauticPlugin\SurgeExtendedCampaignBundle\EventListener;
 
 use Mautic\CampaignBundle\CampaignEvents;
+use Mautic\CampaignBundle\Entity\Event;
 use Mautic\CampaignBundle\Event\ScheduledEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
+use Mautic\CampaignBundle\Entity\LeadEventLog;
 use Monolog\Logger;
 
-class CustomScheduleEvent implements EventSubscriberInterface
+class CampaignScheduleEventSubscriber implements EventSubscriberInterface
 {
   /**
    * @var Logger
@@ -31,9 +32,26 @@ class CustomScheduleEvent implements EventSubscriberInterface
     ];
   }
 
-  
-  private function onCustomEventSchedule(ScheduledEvent $event)
+
+  public function onCustomEventSchedule(ScheduledEvent $event)
   {
-    $this->logger->error('onCampaignEventPostSave',['scheduledEvent'  => $event]);
+    $this->logger->error('onCampaignEventPostSave', ['scheduledEvent'  => $event]);
+    /**
+     * @var LeadEventLog $log
+     */
+    $log = $event->getLog();
+
+    /**
+     * @var Event $event
+     */
+    $event = $log->getEvent();
+
+    if (null == $event) {
+      return;
+    }
+
+    if ($event->getTriggerMode() == 'immediate') {
+      return;
+    }
   }
 }

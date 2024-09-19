@@ -106,9 +106,9 @@ class CustomEventController extends EventController
                     if (empty($event['name'])) {
                         $event['name'] = $this->get('translator')->trans($event['settings']['label']);
                     }
-
-                    $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
-                    $event['properties']['triggerIntervalUnit'] = $event['triggerIntervalUnit'];
+                    if(isset($event['triggerIntervalType'])){
+                        $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
+                    }
 
                     $modifiedEvents[$keyId] = $event;
                     $session->set('mautic.campaign.'.$campaignId.'.events.modified', $modifiedEvents);
@@ -251,6 +251,10 @@ class CustomEventController extends EventController
                 // Override the anchorEventType
                 $event['anchorEventType'] = $this->request->get('anchorEventType');
             }
+
+            if(!isset($event['triggerIntervalType'])){
+                $event['triggerIntervalType'] = $event['properties']['triggerIntervalType'];
+            }
         }
 
         /*
@@ -286,12 +290,7 @@ class CustomEventController extends EventController
         /** @var EventCollector $eventCollector */
         $eventCollector  = $this->get('mautic.campaign.event_collector');
         $supportedEvents = $eventCollector->getEventsArray()[$event['eventType']];
-        
-        $logger = $this->container->get('monolog.logger.mautic');
-        $logger->error('On render form',['RenderEvent' => $event]);
-        if(isset($event['triggerIntervalType'])){
-            $event['triggerIntervalType'] = $event['properties']['triggerIntervalType'];
-        }
+
         $form = $this->get('form.factory')->create(
             CustomEventType::class,
             $event,
@@ -311,16 +310,19 @@ class CustomEventController extends EventController
                 if ($valid = $this->isFormValid($form)) {
                     $formData = $form->getData();
                     $event    = array_merge($event, $formData);
-                    $logger = $this->container->get('monolog.logger.mautic');
-                    $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
-                    $event['properties']['triggerIntervalUnit'] = $event['triggerIntervalUnit'];
-                    dd($event);
-                    $logger->error('Inpost',['In post method' => $event]);
+
+                    if(isset($event['triggerIntervalType'])){
+                        $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
+                    }
+
+                    // Set the name to the event default if not known.
                     if (empty($event['name'])) {
                         $event['name'] = $event['settings']['label'];
                     }
 
                     $modifiedEvents[$objectId] = $event;
+
+                    // Save the modified event properties to session
                     $session->set('mautic.campaign.'.$campaignId.'.events.modified', $modifiedEvents);
                 }
             }
@@ -350,7 +352,7 @@ class CustomEventController extends EventController
                 'eventHeader'      => $event['settings']['label'],
                 'eventDescription' => $event['settings']['description'],
             ]);
-            $logger = $this->container->get('monolog.logger.mautic');
+            
             return $this->ajaxAction(
                 [
                     'contentTemplate' => 'SurgeExtendedCampaignBundle:Event:form.html.php',
