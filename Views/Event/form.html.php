@@ -18,12 +18,11 @@
     </div>
 
     <?php echo $view['form']->start($form); ?>
-
+          
     <?php echo $view['form']->widget($form['canvasSettings']['droppedX']); ?>
     <?php echo $view['form']->widget($form['canvasSettings']['droppedY']); ?>
 
     <?php echo $view['form']->row($form['name']); ?>
-
     <?php if (isset($form['triggerMode'])): ?>
     <div<?php echo $hideTriggerMode ? ' class="hide"' : ''; ?>>
         <?php echo $view['form']->row($form['triggerMode']); ?>
@@ -43,6 +42,7 @@
                     <label>Of</label>
                 </div>
                 <div class="col-sm-4">
+                  
                     <?php echo $view['form']->row($form['triggerIntervalUnit']); ?>
                 </div>
             </div>

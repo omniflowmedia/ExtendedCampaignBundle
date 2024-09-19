@@ -2,6 +2,7 @@
 
 namespace MauticPlugin\SurgeExtendedCampaignBundle\Controller;
 
+use Doctrine\DBAL\Driver\IBMDB2\Connection;
 use Mautic\CampaignBundle\Controller\EventController;
 use Mautic\CampaignBundle\Entity\Event;
 use Mautic\CampaignBundle\Event\CampaignEvent;
@@ -285,17 +286,13 @@ class CustomEventController extends EventController
         /** @var EventCollector $eventCollector */
         $eventCollector  = $this->get('mautic.campaign.event_collector');
         $supportedEvents = $eventCollector->getEventsArray()[$event['eventType']];
-        $logger = $this->container->get('monolog.logger.mautic');
-        $logger->error('message',['dEvents' => $event]);
-
-        $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
-        $event['properties']['triggerIntervalUnit'] =$event['triggerIntervalType'];
-        // $sql = 'Select * from campaign_events where campaign_id = '.$campaignId.' and id = '.$event['id'];
         
-
-        // $campaignEvent  = Cam::where('campaign_id', $campaignId);
-        // $event['triggerIntervalType'] = ;
-        $form            = $this->get('form.factory')->create(
+        $logger = $this->container->get('monolog.logger.mautic');
+        $logger->error('On render form',['RenderEvent' => $event]);
+        if(isset($event['triggerIntervalType'])){
+            $event['triggerIntervalType'] = $event['properties']['triggerIntervalType'];
+        }
+        $form = $this->get('form.factory')->create(
             CustomEventType::class,
             $event,
             [
@@ -314,8 +311,11 @@ class CustomEventController extends EventController
                 if ($valid = $this->isFormValid($form)) {
                     $formData = $form->getData();
                     $event    = array_merge($event, $formData);
+                    $logger = $this->container->get('monolog.logger.mautic');
                     $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
-                    $event['properties']['triggerIntervalUnit'] =$event['triggerIntervalType'];
+                    $event['properties']['triggerIntervalUnit'] = $event['triggerIntervalUnit'];
+                    dd($event);
+                    $logger->error('Inpost',['In post method' => $event]);
                     if (empty($event['name'])) {
                         $event['name'] = $event['settings']['label'];
                     }

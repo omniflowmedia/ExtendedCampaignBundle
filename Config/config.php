@@ -37,6 +37,12 @@ return [
           'monolog.logger.mautic'
         ],
       ],
+      'extendedcampaigns.event.customscheduleevent.subscriber' => [
+        'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\EventListener\CustomScheduleEvent::class,
+        'arguments' => [
+          'monolog.logger.mautic'
+        ],
+      ],
     ],
     'models' => [
       'mautic.extendedcampaigns.model.customcampaigns' => [

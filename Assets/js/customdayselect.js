@@ -31,21 +31,16 @@ Mautic.updateTriggerIntervalUnitOptions = function() {
       const intervalType = document.getElementById('campaignevent_triggerIntervalType').value;
       console.log(intervalType);
       const intervalUnits = {
-        'n': {'i': 'minutes', 'h': 'hours', 'd': 'days', 'w': 'weeks', 'm': 'months'}, 
-        'i': {'h': 'hours', 'd': 'days', 'w': 'weeks', 'm': 'months'},     
-        'h': {'d': 'days', 'w': 'weeks', 'm': 'months'},     
+        'n': {'i': 'minutes', 'h': 'hours', 'd': 'days', 'm': 'months'}, 
+        'i': {'h': 'hours', 'd': 'days', 'm': 'months'},     
+        'h': {'d': 'days',  'm': 'months'},     
         'd': {'m': 'months', 'y': 'years'},    
         'w': {'m': 'months', 'y': 'years'},
         'm': {'y': 'years'}      
     };
-  
-      // Get the triggerIntervalUnit select element
       const intervalUnitSelect = document.getElementById('campaignevent_triggerIntervalUnit');
-  
       intervalUnitSelect.innerHTML = '';
-  
       const units = intervalUnits[intervalType] || {};
-  
       for (const unitValue in units) {
         const option = document.createElement('option');
         option.value = unitValue;
