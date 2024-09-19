@@ -31,6 +31,7 @@ class CustomScheduleEvent implements EventSubscriberInterface
     ];
   }
 
+  
   private function onCustomEventSchedule(ScheduledEvent $event)
   {
     $this->logger->error('onCampaignEventPostSave',['scheduledEvent'  => $event]);
