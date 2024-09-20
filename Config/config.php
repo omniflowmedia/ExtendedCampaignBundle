@@ -37,12 +37,7 @@ return [
           'monolog.logger.mautic'
         ],
       ],
-      'extendedcampaigns.event.campaign_schedule_event.subscriber' => [
-        'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\EventListener\CampaignScheduleEventSubscriber::class,
-        'arguments' => [
-          'monolog.logger.mautic'
-        ],
-      ],
+      
     ],
     'models' => [
       'mautic.extendedcampaigns.model.customcampaigns' => [
@@ -57,6 +52,14 @@ return [
         ],
       ],
     ],
+    'execution' =>[
+      'mautic.extendedcampaigns.campaignstriggerinterval' => [
+        'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\Executioner\UpdateCampaignEventInterval::class,
+        'arguments' => [
+          'monolog.logger.mautic',
+        ]
+        ]
+      ],
     'forms' => [
       'mautic.form.type.extendedcampaigns.campaigns' => [
         'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\Form\Type\CustomCampaignType::class,
