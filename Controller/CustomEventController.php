@@ -230,8 +230,8 @@ class CustomEventController extends EventController
             : $this->request->query->get('campaignId');
         $modifiedEvents = $session->get('mautic.campaign.'.$campaignId.'.events.modified', []);
         $event          = array_key_exists($objectId, $modifiedEvents) ? $modifiedEvents[$objectId] : [];
-
         if ('POST' === $method) {
+
             $event = array_merge($event, [
                 'anchor'          => $campaignEvent['anchor'] ?? '',
                 'anchorEventType' => $campaignEvent['anchorEventType'] ?? '',
@@ -251,8 +251,8 @@ class CustomEventController extends EventController
                 // Override the anchorEventType
                 $event['anchorEventType'] = $this->request->get('anchorEventType');
             }
-
             if(!isset($event['triggerIntervalType'])){
+
                 $event['triggerIntervalType'] = $event['properties']['triggerIntervalType'];
             }
         }
@@ -310,11 +310,14 @@ class CustomEventController extends EventController
                 if ($valid = $this->isFormValid($form)) {
                     $formData = $form->getData();
                     $event    = array_merge($event, $formData);
-
                     if(isset($event['triggerIntervalType'])){
                         $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
                     }
-
+                    
+                    if(isset($event['triggerIntervalStatus'])){
+                      $event['properties']['triggerIntervalStatus'] = $event['triggerIntervalStatus'];
+                    }
+                    
                     // Set the name to the event default if not known.
                     if (empty($event['name'])) {
                         $event['name'] = $event['settings']['label'];

@@ -27,14 +27,13 @@ class CustomEventType extends EventType
     {
         parent::buildForm($builder, $options);
 
-        $triggerIntervalType = (!empty($options['data']['triggerIntervalType'])) ? $options['data']['triggerIntervalType'] : 'na';
+        $triggerIntervalType = (!empty($options['data']['triggerIntervalType'])) ? $options['data']['triggerIntervalType'] : 'minute';
 
         $builder->add(
             'triggerIntervalType',
             ChoiceType::class,
             [
                 'choices'     => [
-                    'mautic.campaign.event.intervalunit.customchoice.n' => 'na',
                     'mautic.campaign.event.intervalunit.customchoice.i' => 'i',
                     'mautic.campaign.event.intervalunit.customchoice.h' => 'h',
                     'mautic.campaign.event.intervalunit.customchoice.d' => 'd',
@@ -51,6 +50,29 @@ class CustomEventType extends EventType
                 'placeholder' => false,
                 'required'    => false,
                 'data'        => $triggerIntervalType,
+            ]
+        );
+
+        $triggerIntervalStatus = (!empty($options['data']['triggerIntervalStatus'])) ? $options['data']['triggerIntervalStatus'] : 'wait';
+
+        $builder->add(
+            'triggerIntervalStatus',
+            ChoiceType::class,
+            [
+                'choices'     => [
+                    'mautic.campaign.event.intervalstatus.customchoice.wait' => 'wait',
+                    'mautic.campaign.event.intervalstatus.customchoice.wait_until' => 'wait_until',
+                ],
+                'multiple'          => false,
+                'label_attr'        => ['class' => 'control-label'],
+                'label'             => false,
+                'attr'              => [
+                    'class' => 'form-control',
+                    'onchange' => 'Mautic.updateTriggerIntervalOptions()',
+                ],
+                'placeholder' => false,
+                'required'    => false,
+                'data'        => $triggerIntervalStatus,
             ]
         );
 
@@ -116,5 +138,6 @@ class CustomEventType extends EventType
                 'data'        => $triggerIntervalUnit,
             ]
         );
+        
     }
 }

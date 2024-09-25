@@ -24,3 +24,22 @@ Mautic.updateTriggerIntervalUnitOptions = function () {
   Mautic.campaignEventShowHideIntervalSettings();
 
 }
+Mautic.updateTriggerIntervalOptions = function () {
+  const status = document.getElementById('campaignevent_triggerIntervalStatus').value;
+  console.log("clicked",status)
+  if(status == 'wait'){
+    mQuery('#label-container').addClass('hide');
+    mQuery('#triggerIntervalType-container').addClass('hide');
+    mQuery('#triggerInterval-container').removeClass('col-sm-3').addClass('col-sm-4'); // Change triggerInterval to col-sm-6
+    mQuery('#triggerIntervalUnit-container').removeClass('col-sm-4').addClass('col-sm-8'); // C
+  }else{
+      mQuery('#label-container').removeClass('hide');
+      mQuery('#triggerIntervalType-container').removeClass('hide');
+      mQuery('#triggerInterval-container').removeClass('col-sm-4').addClass('col-sm-3'); // Change triggerInterval to col-sm-6
+      mQuery('#triggerIntervalUnit-container').removeClass('col-sm-8').addClass('col-sm-4'); // C
+  }
+  // Mautic.destroyChosen(mQuery("#campaignevent_triggerIntervalType"));
+  // Mautic.destroyChosen(mQuery("#campaignevent_triggerIntervalUnit"));
+  // Mautic.activateChosenSelect(mQuery("#campaignevent_triggerIntervalUnit"));
+  // Mautic.campaignEventShowHideIntervalSettings();
+} 
