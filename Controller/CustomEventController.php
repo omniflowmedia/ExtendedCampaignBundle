@@ -109,7 +109,9 @@ class CustomEventController extends EventController
                     if(isset($event['triggerIntervalType'])){
                         $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
                     }
-
+                    if(isset($event['triggerIntervalStatus'])){
+                      $event['properties']['triggerIntervalStatus'] = $event['triggerIntervalStatus'];
+                    }
                     $modifiedEvents[$keyId] = $event;
                     $session->set('mautic.campaign.'.$campaignId.'.events.modified', $modifiedEvents);
                 } else {
