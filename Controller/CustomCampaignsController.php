@@ -511,6 +511,66 @@ class CustomCampaignsController extends CampaignController
         );
     }
 
+    protected function prepareCampaignEventsForEdit($entity, $objectId, $isClone = false)
+    {
+        //load existing events into session
+        $campaignEvents = [];
+
+        $existingEvents = $entity->getEvents()->toArray();
+        $translator     = $this->get('translator');
+        $dateHelper     = $this->get('mautic.helper.template.date');
+        foreach ($existingEvents as $e) {
+            $event = $e->convertToArray();
+
+            if ($isClone) {
+                $id          = $e->getTempId();
+                $event['id'] = $id;
+            } else {
+                $id = $e->getId();
+            }
+
+            unset($event['campaign']);
+            unset($event['children']);
+            unset($event['parent']);
+            unset($event['log']);
+
+            // dd($event);
+
+            $label = false;
+            switch ($event['triggerMode']) {
+                case 'interval':
+                    $label = $translator->trans(
+                        'mautic.campaign.connection.trigger.interval.label'.('no' == $event['decisionPath'] ? '_inaction' : ''),
+                        [
+                            '%number%' => $event['triggerInterval'],
+                            '%unit%'   => $translator->trans(
+                                'mautic.campaign.event.intervalunit.'.$event['triggerIntervalUnit'],
+                                ['%count%' => $event['triggerInterval']]
+                            ),
+                        ]
+                    );
+                    break;
+                case 'date':
+                    $label = $translator->trans(
+                        'mautic.campaign.connection.trigger.date.label'.('no' == $event['decisionPath'] ? '_inaction' : ''),
+                        [
+                            '%full%' => $dateHelper->toFull($event['triggerDate']),
+                            '%time%' => $dateHelper->toTime($event['triggerDate']),
+                            '%date%' => $dateHelper->toShort($event['triggerDate']),
+                        ]
+                    );
+                    break;
+            }
+            if ($label) {
+                $event['label'] = $label;
+            }
+
+            $campaignEvents[$id] = $event;
+        }
+
+        $this->modifiedEvents = $this->campaignEvents = $campaignEvents;
+        $this->get('session')->set('mautic.campaign.'.$objectId.'.events.modified', $campaignEvents);
+    }
 
     private function getCampaignCstm($campaignId)
     {

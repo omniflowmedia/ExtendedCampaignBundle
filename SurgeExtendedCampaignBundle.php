@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace MauticPlugin\SurgeExtendedCampaignBundle;
 
 use Mautic\PluginBundle\Bundle\PluginBundleBase;
-use MauticPlugin\SurgeExtendedCampaignBundle\DependencyInjection\Compiler\CampaignEventInterval;
-use MauticPlugin\SurgeExtendedCampaignBundle\DependencyInjection\Compiler\OverrideEventModel;
+use MauticPlugin\SurgeExtendedCampaignBundle\DependencyInjection\Compiler\OverrideInterval;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class SurgeExtendedCampaignBundle extends PluginBundleBase
@@ -16,8 +15,7 @@ class SurgeExtendedCampaignBundle extends PluginBundleBase
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new OverrideEventModel());
-        $container->addCompilerPass(new CampaignEventInterval());
+        $container->addCompilerPass(new OverrideInterval());
         parent::build($container);
 
     }

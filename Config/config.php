@@ -23,21 +23,6 @@ return [
           'monolog.logger.mautic'
         ],
       ],
-      'extendedcampaigns.event.customevent.subscriber' => [
-        'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\EventListener\CustomEventSubscriber::class,
-        'arguments' => [
-          'controller_resolver',
-          'mautic.helper.user',
-          'mautic.helper.core_parameters',
-          'event_dispatcher',
-          'translator',
-          'mautic.factory',
-          'mautic.core.service.flashbag',
-          'mautic.helper.integration',
-          'monolog.logger.mautic'
-        ],
-      ],
-      
     ],
     'models' => [
       'mautic.extendedcampaigns.model.customcampaigns' => [
@@ -46,20 +31,7 @@ return [
           'mautic.campaign.model.campaign',
         ],
       ],
-      'mautic.extendedcampaigns.model.customcampaignevents' => [
-        'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\Model\CustomEventModel::class,
-        'arguments' => [
-        ],
-      ],
     ],
-    'execution' =>[
-      'mautic.extendedcampaigns.campaignstriggerinterval' => [
-        'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\Executioner\UpdateCampaignEventInterval::class,
-        'arguments' => [
-          'monolog.logger.mautic',
-        ]
-        ]
-      ],
     'forms' => [
       'mautic.form.type.extendedcampaigns.campaigns' => [
         'class'     => \MauticPlugin\SurgeExtendedCampaignBundle\Form\Type\CustomCampaignType::class,
