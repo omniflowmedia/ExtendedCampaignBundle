@@ -255,6 +255,9 @@ class CustomEventController extends EventController
 
                 $event['triggerIntervalType'] = $event['properties']['triggerIntervalType'];
             }
+            if(!isset($event['triggerIntervalStatus'])){
+              $event['triggerIntervalStatus'] = $event['properties']['triggerIntervalStatus'];
+          }            
         }
 
         /*
@@ -313,7 +316,7 @@ class CustomEventController extends EventController
                     if(isset($event['triggerIntervalType'])){
                         $event['properties']['triggerIntervalType'] = $event['triggerIntervalType'];
                     }
-                    
+
                     if(isset($event['triggerIntervalStatus'])){
                       $event['properties']['triggerIntervalStatus'] = $event['triggerIntervalStatus'];
                     }

@@ -118,7 +118,7 @@ class CustomEventType extends EventType
             'mautic.campaign.event.intervalunit.choice.y' => 'y',
         ];
 
-        if(!empty($triggerIntervalType) && isset($triggerIntervalUntiOptionsMap[$triggerIntervalType])){
+        if(!empty($triggerIntervalType) && isset($triggerIntervalUntiOptionsMap[$triggerIntervalType]) &&!empty($triggerIntervalStatus) && $triggerIntervalStatus == 'wait_until') {
             $options = $triggerIntervalUntiOptionsMap[$triggerIntervalType];
         }
 
