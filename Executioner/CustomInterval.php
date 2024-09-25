@@ -43,9 +43,10 @@ class CustomInterval extends Interval
 	public function getExecutionDateTime(Event $event, \DateTime $compareFromDateTime = null, \DateTime $comparedToDateTime = null)
 	{
 		$intervalType = $event->getProperties()['triggerIntervalType'] ?? 'na';
+    $intervalStatus = $event->getProperties()['triggerIntervalStatus'] ?? 'wait';
     $intervalUnit     = $event->getTriggerIntervalUnit();
 
-		if ($intervalType === 'na') {
+		if ($intervalStatus === 'wait' || $intervalType === 'na') {
 			$interval = $event->getTriggerInterval();
 		} else {
 			$interval = 1;
@@ -88,7 +89,6 @@ class CustomInterval extends Interval
 		if ($intervalType === 'na') {
 			return $dateTime;
 		}
-
     
 		switch ($intervalType) {
 			case 'i':

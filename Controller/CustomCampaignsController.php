@@ -533,22 +533,34 @@ class CustomCampaignsController extends CampaignController
             unset($event['children']);
             unset($event['parent']);
             unset($event['log']);
-
-            // dd($event);
-
+            $intervalType = $event['properties']['triggerIntervalType'] ?? 'na';
+            $intervalStatus = $event['properties']['triggerIntervalStatus'] ?? 'wait';
             $label = false;
             switch ($event['triggerMode']) {
                 case 'interval':
-                    $label = $translator->trans(
-                        'mautic.campaign.connection.trigger.interval.label'.('no' == $event['decisionPath'] ? '_inaction' : ''),
+                    if ($intervalStatus === 'wait' || $intervalType === 'na') {
+                      $label = $translator->trans(
+                          'mautic.campaign.connection.trigger.interval.label'.('no' == $event['decisionPath'] ? '_inaction' : ''),
+                          [
+                              '%number%' => $event['triggerInterval'],
+                              '%unit%'   => $translator->trans(
+                                  'mautic.campaign.event.intervalunit.'.$event['triggerIntervalUnit'],
+                                  ['%count%' => $event['triggerInterval']]
+                              ),
+                          ]
+                      );
+                    }else{
+                      $interval = $event['triggerInterval'];
+                      $suffix = $this->getOrdinalSuffix($interval);
+
+                      $label = $translator->trans(
+                        'mautic.campaign.connection.trigger.date.label'.('no' == $event['decisionPath'] ? '_inaction' : ''),
                         [
-                            '%number%' => $event['triggerInterval'],
-                            '%unit%'   => $translator->trans(
-                                'mautic.campaign.event.intervalunit.'.$event['triggerIntervalUnit'],
-                                ['%count%' => $event['triggerInterval']]
-                            ),
+                          '%full%' => $interval . $suffix . ' ' .$translator->trans('mautic.campaign.event.intervalunit.customchoice.' . $intervalType) .
+                          ' of next ' . $translator->trans('mautic.campaign.event.intervalunit.customchoice.'.$event['triggerIntervalUnit'])
                         ]
-                    );
+                      );  
+                    }
                     break;
                 case 'date':
                     $label = $translator->trans(
@@ -570,6 +582,26 @@ class CustomCampaignsController extends CampaignController
 
         $this->modifiedEvents = $this->campaignEvents = $campaignEvents;
         $this->get('session')->set('mautic.campaign.'.$objectId.'.events.modified', $campaignEvents);
+    }
+
+    private function getOrdinalSuffix($number)
+    {
+        // Handle special cases for 11, 12, 13 as they use "th"
+        if ($number % 100 >= 11 && $number % 100 <= 13) {
+            return 'th';
+        }
+
+        // Handle general cases for numbers ending in 1, 2, 3
+        switch ($number % 10) {
+            case 1:
+                return 'st';
+            case 2:
+                return 'nd';
+            case 3:
+                return 'rd';
+            default:
+                return 'th';
+        }
     }
 
     private function getCampaignCstm($campaignId)
