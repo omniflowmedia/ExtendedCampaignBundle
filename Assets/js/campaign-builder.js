@@ -3,7 +3,6 @@ Mautic.updateTriggerIntervalUnitOptions = function () {
   const triggerStatus = mQuery('#campaignevent_triggerIntervalStatus').val();
   const intervalValue = parseInt(document.getElementById('campaignevent_triggerInterval').value, 10);
   
-  console.log("triggerStatus",triggerStatus)
   const intervalUnits = {
     i: {
       limits: {
@@ -79,7 +78,6 @@ Mautic.updateTriggerIntervalUnitOptions = function () {
   }
 
   for(const units in availableLabels){
-    console.log("unit",units)
     const option = document.createElement('option');
     option.value = units;
     option.textContent = availableLabels[units];
@@ -95,7 +93,6 @@ Mautic.updateTriggerIntervalUnitOptions = function () {
 
 Mautic.updateTriggerIntervalOptions = function () {
   const status = document.getElementById('campaignevent_triggerIntervalStatus').value;
-  console.log("clicked",status)
   if(status == 'wait'){
     mQuery('#label-container').addClass('hide');
     mQuery('#triggerIntervalType-container').addClass('hide');
