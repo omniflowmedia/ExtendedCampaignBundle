@@ -46,7 +46,7 @@ class CustomInterval extends Interval
     $intervalStatus = $event->getProperties()['triggerIntervalStatus'] ?? 'wait';
     $intervalUnit     = $event->getTriggerIntervalUnit();
 
-		if ($intervalStatus === 'wait' || $intervalType === 'na') {
+		if ($intervalStatus == 'wait' || $intervalType == 'na') {
 			$interval = $event->getTriggerInterval();
 		} else {
 			$interval = 1;
@@ -80,6 +80,10 @@ class CustomInterval extends Interval
 		);
 
     $interval = $event->getTriggerInterval();
+
+    if ($intervalStatus == 'wait') {
+      return $compareFromDateTime;
+    }
 
 		return $this->setEventIntervalType($compareFromDateTime, $interval, $intervalType, $intervalUnit);
 	}
