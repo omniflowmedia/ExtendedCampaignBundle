@@ -1,8 +1,8 @@
 Mautic.updateTriggerIntervalUnitOptions = function () {
   const intervalType = document.getElementById('campaignevent_triggerIntervalType').value;
   const triggerStatus = mQuery('#campaignevent_triggerIntervalStatus').val();
-  const intervalValue = parseInt(document.getElementById('campaignevent_triggerInterval').value, 10);
-  
+  let intervalValue = parseInt(document.getElementById('campaignevent_triggerInterval').value, 10);
+  if(isNaN(intervalValue))intervalValue = 0;
   const intervalUnits = {
     i: {
       limits: {
