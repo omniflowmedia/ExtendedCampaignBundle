@@ -17,6 +17,8 @@ git clone https://github.com/Surge-Media/SurgeExtendedCampaignBundle.git
 
 ### 2. Upload the Plugin to Surge
 - Upload the downloaded plugin folder to Surge's plugin directory: /plugins.
+- If SurgeExtendedBundles is present in the /plugins directory, first move that directory out to /tmp
+- Unizip the new plugin and make sure it is called SurgeExtendedBundles
 
 ### 3. Clear Surge Cache
 - After uploading the plugin, clear Surge's cache to recognize the plugin.
