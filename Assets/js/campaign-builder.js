@@ -1,30 +1,91 @@
 Mautic.updateTriggerIntervalUnitOptions = function () {
-  // Get the selected value of triggerIntervalType
   const intervalType = document.getElementById('campaignevent_triggerIntervalType').value;
   const triggerStatus = mQuery('#campaignevent_triggerIntervalStatus').val();
+  const intervalValue = parseInt(document.getElementById('campaignevent_triggerInterval').value, 10);
+  
   console.log("triggerStatus",triggerStatus)
   const intervalUnits = {
-    'i': { 'h': 'hour(s)', 'd': 'day(s)', 'm': 'month(s)', 'y': 'year(s)' },
-    'h': { 'd': 'day(s)', 'm': 'month(s)', 'y': 'year(s)' },
-    'd': { 'm': 'month(s)', 'y': 'year(s)' },
-    'w': { 'm': 'month(s)', 'y': 'year(s)' },
-    'm': { 'y': 'year(s)' }
+    i: {
+      limits: {
+        h: { min: 0, max: 59 },
+        d: { min: 0, max: 24*60 },
+        m: { min: 0, max: 31*24*60 },
+        y: { min: 0, max: 366*24*60 },
+      },
+      labels: { h: 'hour(s)', d: 'day(s)', m: 'month(s)', y: 'year(s)' },
+    },
+    h: {
+      limits: {
+        d: { min: 0, max: 23 },
+        m: { min: 0, max: 31*24 },
+        y: { min: 0, max: 366*24 },
+      },
+      labels: { d: 'day(s)', m: 'month(s)', y: 'year(s)' },
+    },
+    d: {
+      limits: {
+        m: { min: 0, max: 31 },
+        y: { min: 0, max: 366 },
+      },
+      labels: { m: 'month(s)', y: 'year(s)' },
+    },
+    w: {
+      limits: {
+        m: { min: 0, max: 5 },
+        y: { min: 0, max: 53 },
+      },
+      labels: { m: 'month(s)', y: 'year(s)' },
+    },
+    m: {
+      limits: {
+        y: { min: 1, max: 12 },
+      },
+      labels: { y: 'year(s)' },
+    },
   };
 
+  
   const intervalUnitSelect = document.getElementById('campaignevent_triggerIntervalUnit');
   intervalUnitSelect.innerHTML = '';
-  let units;
-  if(triggerStatus == 'wait_until'){
+  
+  let availableLabels;
+  if (triggerStatus === 'wait_until') {
     units = intervalUnits[intervalType] || {};
-  }else {
-    units = {'i': 'minutes(s)' ,'h': 'hour(s)', 'd': 'day(s)', 'm': 'month(s)', 'y': 'year(s)' };
+    availableLabels = getAvailableLabels(intervalValue, intervalType);
+  } else {
+    availableLabels = {
+      'i': 'minute(s)',
+      'h': 'hour(s)',
+      'd': 'day(s)',
+      'm': 'month(s)',
+      'y': 'year(s)'
+    };
   }
-  for (const unitValue in units) {
+  function getAvailableLabels(intervalValue, intervalType) {
+    const currentUnit = intervalUnits[intervalType];
+  
+    if (!currentUnit) {
+      return [];
+    }
+  
+    const availableLabels = {};
+  
+    for (const [unit, limit] of Object.entries(currentUnit.limits)) {
+      if (intervalValue >= limit.min && intervalValue <= limit.max) {
+        availableLabels[unit] = currentUnit.labels[unit];
+      }
+    }
+    return availableLabels;
+  }
+
+  for(const units in availableLabels){
+    console.log("unit",units)
     const option = document.createElement('option');
-    option.value = unitValue;
-    option.textContent = units[unitValue];
+    option.value = units;
+    option.textContent = availableLabels[units];
     intervalUnitSelect.appendChild(option);
-  }
+  };
+  
   Mautic.destroyChosen(mQuery("#campaignevent_triggerIntervalUnit"));
   Mautic.activateChosenSelect(mQuery("#campaignevent_triggerIntervalUnit"));
   Mautic.campaignEventShowHideIntervalSettings();

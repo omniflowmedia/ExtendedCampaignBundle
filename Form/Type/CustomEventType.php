@@ -21,123 +21,138 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CustomEventType extends EventType
 {
-    use PropertiesTrait;
+  use PropertiesTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        parent::buildForm($builder, $options);
+  public function buildForm(FormBuilderInterface $builder, array $options)
+  {
+    parent::buildForm($builder, $options);
 
-        $triggerIntervalType = (!empty($options['data']['triggerIntervalType'])) ? $options['data']['triggerIntervalType'] : 'minute';
+    $data = (!isset($options['data']['triggerInterval']) || '' === $options['data']['triggerInterval']
+      || null === $options['data']['triggerInterval']) ? 1 : (int) $options['data']['triggerInterval'];
+    $builder->add(
+      'triggerInterval',
+      NumberType::class,
+      [
+        'label' => false,
+        'attr'  => [
+          'class'    => 'form-control',
+          'preaddon' => 'symbol-hashtag',
+          'onchange' => 'Mautic.updateTriggerIntervalUnitOptions()',
+        ],
+        'data'  => $data,
+      ]
+    );
 
-        $builder->add(
-            'triggerIntervalType',
-            ChoiceType::class,
-            [
-                'choices'     => [
-                    'mautic.campaign.event.intervalunit.customchoice.i' => 'i',
-                    'mautic.campaign.event.intervalunit.customchoice.h' => 'h',
-                    'mautic.campaign.event.intervalunit.customchoice.d' => 'd',
-                    'mautic.campaign.event.intervalunit.customchoice.w' => 'w',
-                    'mautic.campaign.event.intervalunit.customchoice.m' => 'm',
-                ],
-                'multiple'          => false,
-                'label_attr'        => ['class' => 'control-label'],
-                'label'             => false,
-                'attr'              => [
-                    'class' => 'form-control',
-                    'onchange' => 'Mautic.updateTriggerIntervalUnitOptions()',
-                ],
-                'placeholder' => false,
-                'required'    => false,
-                'data'        => $triggerIntervalType,
-            ]
-        );
+    $triggerIntervalType = (!empty($options['data']['triggerIntervalType'])) ? $options['data']['triggerIntervalType'] : 'minute';
 
-        $triggerIntervalStatus = (!empty($options['data']['triggerIntervalStatus'])) ? $options['data']['triggerIntervalStatus'] : 'wait';
+    $builder->add(
+      'triggerIntervalType',
+      ChoiceType::class,
+      [
+        'choices'     => [
+          'mautic.campaign.event.intervalunit.customchoice.i' => 'i',
+          'mautic.campaign.event.intervalunit.customchoice.h' => 'h',
+          'mautic.campaign.event.intervalunit.customchoice.d' => 'd',
+          'mautic.campaign.event.intervalunit.customchoice.w' => 'w',
+          'mautic.campaign.event.intervalunit.customchoice.m' => 'm',
+        ],
+        'multiple'          => false,
+        'label_attr'        => ['class' => 'control-label'],
+        'label'             => false,
+        'attr'              => [
+          'class' => 'form-control',
+          'onchange' => 'Mautic.updateTriggerIntervalUnitOptions()',
+        ],
+        'placeholder' => false,
+        'required'    => false,
+        'data'        => $triggerIntervalType,
+      ]
+    );
 
-        $builder->add(
-            'triggerIntervalStatus',
-            ChoiceType::class,
-            [
-                'choices'     => [
-                    'mautic.campaign.event.intervalstatus.customchoice.wait' => 'wait',
-                    'mautic.campaign.event.intervalstatus.customchoice.wait_until' => 'wait_until',
-                ],
-                'multiple'          => false,
-                'label_attr'        => ['class' => 'control-label'],
-                'label'             => false,
-                'attr'              => [
-                    'class' => 'form-control',
-                    'onchange' => 'Mautic.updateTriggerIntervalOptions()',
-                ],
-                'placeholder' => false,
-                'required'    => false,
-                'data'        => $triggerIntervalStatus,
-            ]
-        );
+    $triggerIntervalStatus = (!empty($options['data']['triggerIntervalStatus'])) ? $options['data']['triggerIntervalStatus'] : 'wait';
 
-        $triggerIntervalUnit = (!empty($options['data']['triggerIntervalUnit'])) ? $options['data']['triggerIntervalUnit'] : 'd';
+    $builder->add(
+      'triggerIntervalStatus',
+      ChoiceType::class,
+      [
+        'choices'     => [
+          'mautic.campaign.event.intervalstatus.customchoice.wait' => 'wait',
+          'mautic.campaign.event.intervalstatus.customchoice.wait_until' => 'wait_until',
+        ],
+        'multiple'          => false,
+        'label_attr'        => ['class' => 'control-label'],
+        'label'             => false,
+        'attr'              => [
+          'class' => 'form-control',
+          'onchange' => 'Mautic.updateTriggerIntervalOptions()',
+        ],
+        'placeholder' => false,
+        'required'    => false,
+        'data'        => $triggerIntervalStatus,
+      ]
+    );
 
-        $triggerIntervalUntiOptionsMap = [
-            'na' => [
-                'mautic.campaign.event.intervalunit.choice.i' => 'i',
-                'mautic.campaign.event.intervalunit.choice.h' => 'h',
-                'mautic.campaign.event.intervalunit.choice.d' => 'd',
-                'mautic.campaign.event.intervalunit.choice.m' => 'm',
-                'mautic.campaign.event.intervalunit.choice.y' => 'y',
-            ],
-            'i' => [
-                'mautic.campaign.event.intervalunit.choice.h' => 'h',
-                'mautic.campaign.event.intervalunit.choice.d' => 'd',
-                'mautic.campaign.event.intervalunit.choice.m' => 'm',
-                'mautic.campaign.event.intervalunit.choice.y' => 'y',
-            ],
-            'h' => [
-                'mautic.campaign.event.intervalunit.choice.d' => 'd',
-                'mautic.campaign.event.intervalunit.choice.m' => 'm',
-                'mautic.campaign.event.intervalunit.choice.y' => 'y',
-            ],
-            'd' => [
-                'mautic.campaign.event.intervalunit.choice.m' => 'm',
-                'mautic.campaign.event.intervalunit.choice.y' => 'y',
-            ],
-            'w' => [
-                'mautic.campaign.event.intervalunit.choice.m' => 'm',
-                'mautic.campaign.event.intervalunit.choice.y' => 'y',
-            ],
-            'm' => [
-                'mautic.campaign.event.intervalunit.choice.y' => 'y',
-            ],
-        ];
+    $triggerIntervalUnit = (!empty($options['data']['triggerIntervalUnit'])) ? $options['data']['triggerIntervalUnit'] : 'd';
 
-        $options = [
-            'mautic.campaign.event.intervalunit.choice.i' => 'i',
-            'mautic.campaign.event.intervalunit.choice.h' => 'h',
-            'mautic.campaign.event.intervalunit.choice.d' => 'd',
-            'mautic.campaign.event.intervalunit.choice.m' => 'm',
-            'mautic.campaign.event.intervalunit.choice.y' => 'y',
-        ];
+    $triggerIntervalUntiOptionsMap = [
+      'na' => [
+        'mautic.campaign.event.intervalunit.choice.i' => 'i',
+        'mautic.campaign.event.intervalunit.choice.h' => 'h',
+        'mautic.campaign.event.intervalunit.choice.d' => 'd',
+        'mautic.campaign.event.intervalunit.choice.m' => 'm',
+        'mautic.campaign.event.intervalunit.choice.y' => 'y',
+      ],
+      'i' => [
+        'mautic.campaign.event.intervalunit.choice.h' => 'h',
+        'mautic.campaign.event.intervalunit.choice.d' => 'd',
+        'mautic.campaign.event.intervalunit.choice.m' => 'm',
+        'mautic.campaign.event.intervalunit.choice.y' => 'y',
+      ],
+      'h' => [
+        'mautic.campaign.event.intervalunit.choice.d' => 'd',
+        'mautic.campaign.event.intervalunit.choice.m' => 'm',
+        'mautic.campaign.event.intervalunit.choice.y' => 'y',
+      ],
+      'd' => [
+        'mautic.campaign.event.intervalunit.choice.m' => 'm',
+        'mautic.campaign.event.intervalunit.choice.y' => 'y',
+      ],
+      'w' => [
+        'mautic.campaign.event.intervalunit.choice.m' => 'm',
+        'mautic.campaign.event.intervalunit.choice.y' => 'y',
+      ],
+      'm' => [
+        'mautic.campaign.event.intervalunit.choice.y' => 'y',
+      ],
+    ];
 
-        if(!empty($triggerIntervalType) && isset($triggerIntervalUntiOptionsMap[$triggerIntervalType]) &&!empty($triggerIntervalStatus) && $triggerIntervalStatus == 'wait_until') {
-            $options = $triggerIntervalUntiOptionsMap[$triggerIntervalType];
-        }
+    $options = [
+      'mautic.campaign.event.intervalunit.choice.i' => 'i',
+      'mautic.campaign.event.intervalunit.choice.h' => 'h',
+      'mautic.campaign.event.intervalunit.choice.d' => 'd',
+      'mautic.campaign.event.intervalunit.choice.m' => 'm',
+      'mautic.campaign.event.intervalunit.choice.y' => 'y',
+    ];
 
-        $builder->add(
-            'triggerIntervalUnit',
-            ChoiceType::class,
-            [
-                'choices'     => $options,
-                'multiple'          => false,
-                'label_attr'        => ['class' => 'control-label'],
-                'label'             => false,
-                'attr'              => [
-                    'class' => 'form-control',
-                ],
-                'placeholder' => false,
-                'required'    => false,
-                'data'        => $triggerIntervalUnit,
-            ]
-        );
-        
+    if (!empty($triggerIntervalType) && isset($triggerIntervalUntiOptionsMap[$triggerIntervalType]) && !empty($triggerIntervalStatus) && $triggerIntervalStatus == 'wait_until') {
+      $options = $triggerIntervalUntiOptionsMap[$triggerIntervalType];
     }
+
+    $builder->add(
+      'triggerIntervalUnit',
+      ChoiceType::class,
+      [
+        'choices'     => $options,
+        'multiple'          => false,
+        'label_attr'        => ['class' => 'control-label'],
+        'label'             => false,
+        'attr'              => [
+          'class' => 'form-control',
+        ],
+        'placeholder' => false,
+        'required'    => false,
+        'data'        => $triggerIntervalUnit,
+      ]
+    );
+  }
 }
